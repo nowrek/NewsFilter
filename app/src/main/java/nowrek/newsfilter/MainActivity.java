@@ -4,15 +4,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import nowrek.newsfilter.Utils.CppLibrariesLoader;
+
 public class MainActivity extends AppCompatActivity {
 
     // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
-    }
+    private CppLibrariesLoader cppLibrariesLoader = new CppLibrariesLoader();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        cppLibrariesLoader.loadCppLibaries();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
