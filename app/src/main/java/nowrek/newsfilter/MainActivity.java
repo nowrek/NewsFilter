@@ -3,7 +3,6 @@ package nowrek.newsfilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
-
 import nowrek.newsfilter.Utils.CppLibrariesLoader;
 
 public class MainActivity extends AppCompatActivity {
