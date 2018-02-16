@@ -17,6 +17,9 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SlidingActivity firstActivity = new SlidingActivity();
+        SlidingActivity secondActivity = new SlidingActivity();
+
 
         /*
         Example of a call to a native method

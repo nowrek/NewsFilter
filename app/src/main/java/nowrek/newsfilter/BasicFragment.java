@@ -8,6 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class BasicFragment extends Fragment {
+    private String tempText;
+
+    static BasicFragment newInstance(String text) {
+        BasicFragment f = new BasicFragment();
+        Bundle b = new Bundle();
+        b.putString("text", text);
+        f.setArguments(b);
+        return f;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
