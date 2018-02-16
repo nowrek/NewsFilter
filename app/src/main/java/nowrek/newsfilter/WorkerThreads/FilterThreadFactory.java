@@ -46,7 +46,7 @@ class FilterTask implements Runnable{
             try {
                 Article articleToProcess = _inputQueue.take();
                 if (articleToProcess.getArticleOrigin().getFilterSet().filterArticle(articleToProcess)) {
-                    _uiHandler.dispatchMessage(_uiHandler.obtainMessage(1, articleToProcess));
+                    _uiHandler.dispatchMessage(_uiHandler.obtainMessage(0, articleToProcess));
                 }
             } catch (InterruptedException ex) {
                 interrupted = true;
