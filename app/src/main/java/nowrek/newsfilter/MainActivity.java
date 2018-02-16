@@ -1,5 +1,6 @@
 package nowrek.newsfilter;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -17,9 +18,9 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SlidingActivity firstActivity = new SlidingActivity();
-        SlidingActivity secondActivity = new SlidingActivity();
 
+        Intent intent1 = new Intent(this, SlidingActivity.class);
+        startActivity(intent1);
 
         /*
         Example of a call to a native method
