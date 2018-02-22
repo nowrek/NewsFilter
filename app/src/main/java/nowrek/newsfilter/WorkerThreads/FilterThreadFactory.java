@@ -7,10 +7,6 @@ import java.util.concurrent.Executors;
 
 import nowrek.newsfilter.DataStructures.Article;
 
-/**
- * Created by jedrzej.nowak on 2018-02-15.
- */
-
 public class FilterThreadFactory {
     private final BlockingQueue<Article> _inputQueue;
     private final Handler _uiHandler;

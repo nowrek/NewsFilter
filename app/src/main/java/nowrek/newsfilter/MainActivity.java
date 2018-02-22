@@ -4,7 +4,12 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+
+import java.util.LinkedList;
+
+import nowrek.newsfilter.DataStructures.URLHandle;
 import nowrek.newsfilter.Utils.CppLibrariesLoader;
+import nowrek.newsfilter.WorkerThreads.PageDownloadTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         tv.setText(stringFromJNI());
         */
 
+        testUrlDownload();
     }
 
     /**
@@ -35,4 +41,16 @@ public class MainActivity extends AppCompatActivity {
      * which is packaged with this application.
      */
     public native String stringFromJNI();
+
+    /**
+     *  Temporary function to test URL downloads
+     */
+    private void testUrlDownload() {
+        URLHandle testUrl = new URLHandle("http://www.google.com");
+        LinkedList<URLHandle> testUrlList= new LinkedList<>();
+        testUrlList.add(testUrl);
+
+        new Thread(new PageDownloadTask(testUrlList)).start();
+
+    }
 }
