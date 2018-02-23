@@ -1,9 +1,5 @@
 package nowrek.newsfilter.Utils;
 
-/**
- * Created by nowrek on 23.11.2017.
- */
-
 public class CppLibrariesLoader {
 
     public CppLibrariesLoader() {

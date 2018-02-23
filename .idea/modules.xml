@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/NewsFilter.iml" filepath="$PROJECT_DIR$/.idea/NewsFilter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NewsFilter.iml" filepath="$PROJECT_DIR$/NewsFilter.iml" />
+      <module fileurl="file://C:\Users\mateusz.rekorajski\StudioProjects\NewsFilter\.idea\NewsFilter.iml" filepath="C:\Users\mateusz.rekorajski\StudioProjects\NewsFilter\.idea\NewsFilter.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

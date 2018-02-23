@@ -1,9 +1,5 @@
 package nowrek.newsfilter.DataStructures;
 
-/**
- * Created by jedrzej.nowak on 2018-02-15.
- */
-
 public class Article {
     private URLHandle _articleOrigin;
     private String _content;
