@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="main_preferences">
+    <PreferenceScreen
+        android:key="new_page_key"
+        android:persistent="false"
+        android:title="@string/new_page">
+        <EditTextPreference
+            android:key="name"
+            android:persistent="false"
+            android:summary="@string/new_page_name"
+            android:title="@string/page_name" />
+        <EditTextPreference
+            android:key="url"
+            android:persistent="false"
+            android:summary="@string/new_page_url"
+            android:title="@string/page_url" />
+        <EditTextPreference
+            android:key="tags"
+            android:persistent="false"
+            android:summary="@string/new_page_tags"
+            android:title="@string/page_tags" />
+        <Preference
+            android:key="button_new_save"
+            android:persistent="false"
+            android:title="@string/button_save"/>
+    </PreferenceScreen>
+    <PreferenceCategory
+        android:key="pages_group"
+        android:persistent="false"
+        android:title="@string/pages_group"/>
+    <Preference
+        android:key="button_main_save"
+        android:persistent="false"
+        android:title="@string/button_apply"/>
+    <Preference
+        android:key="button_main_cancel"
+        android:persistent="false"
+        android:title="@string/button_cancel"/>
+</PreferenceScreen>

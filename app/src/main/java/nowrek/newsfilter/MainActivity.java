@@ -3,10 +3,20 @@ package nowrek.newsfilter;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.LinkedList;
 
+import nowrek.newsfilter.DataStructures.AppConfigData;
 import nowrek.newsfilter.DataStructures.URLHandle;
 import nowrek.newsfilter.Utils.CppLibrariesLoader;
 import nowrek.newsfilter.WorkerThreads.PageDownloadTask;
@@ -33,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         tv.setText(stringFromJNI());
         */
 
-        testUrlDownload();
+        //testUrlDownload();
     }
 
     /**
