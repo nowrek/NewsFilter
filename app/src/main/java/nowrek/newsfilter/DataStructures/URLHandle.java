@@ -10,7 +10,7 @@ public class URLHandle {
         _url = inUrl;
     }
 
-    public FilterSet getFilterSet(){
+    public FilterSet getFilterSet() {
         // TODO returning functioning filter set for this URL
         return null;
     }

@@ -7,7 +7,8 @@ public abstract class ConfigData implements Comparable<ConfigData> {
     protected String Key;
     protected String Name;
 
-    ConfigData(){}
+    ConfigData() {
+    }
 
     abstract public JSONObject toJsonObject();
 

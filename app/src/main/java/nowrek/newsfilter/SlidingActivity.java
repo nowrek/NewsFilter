@@ -1,12 +1,9 @@
 package nowrek.newsfilter;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,23 +15,24 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Collection;
+import java.util.List;
 
 import nowrek.newsfilter.DataStructures.AppConfigData;
 import nowrek.newsfilter.DataStructures.ChangeConfig;
-import nowrek.newsfilter.UI.SettingsFragment;
+import nowrek.newsfilter.DataStructures.PageConfigData;
+import nowrek.newsfilter.UI.ScreenSlidePagerAdapter;
 import nowrek.newsfilter.Utils.ConfigChangeListener;
 
-public class SlidingActivity extends AppCompatActivity implements ConfigChangeListener{
-    private int pagesNumber = 5;
+public class SlidingActivity extends AppCompatActivity implements ConfigChangeListener {
     private ViewPager viewPager;
-    private PagerAdapter pagerAdapter;
-
+    private ScreenSlidePagerAdapter pagerAdapter;
     private AppConfigData appConfigData;
     private static final String CONFIG_FILE_NAME = "appConfig.json";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_screen_slide);
         fileCheck(CONFIG_FILE_NAME);
         getConfiguration();
@@ -47,38 +45,31 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
     }
 
     @Override
-    public void onConfigChange(Collection<ChangeConfig> changedList) {
+    public void onConfigChange(Collection<ChangeConfig> changeList) {
         saveJSONFile(CONFIG_FILE_NAME);
+        getConfiguration();
+        updateFragments();
+        Log.v("Config change", "Config change after clicking apply");
+        if (this.pagerAdapter != null)
+            this.pagerAdapter.notifyDataSetChanged();
     }
 
-
-    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-        ScreenSlidePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            if(position == 0) {
-                return new SettingsFragment();
-            }
-            return new BasicFragment();
-        }
-
-        @Override
-        public int getCount() {
-            return pagesNumber;
+    private void updateFragments() {
+        pagerAdapter.clearPages();
+        List<PageConfigData> pageList = appConfigData.getPageList();
+        for (PageConfigData page : pageList) {
+            pagerAdapter.addPage(page.getPageUrl(), "Page text of page " + page.getPageUrl());
         }
     }
 
-    public AppConfigData getConfiguration(){
-        if(appConfigData == null){
+    public AppConfigData getConfiguration() {
+        if (appConfigData == null) {
             appConfigData = new AppConfigData(getJSONFile(CONFIG_FILE_NAME));
         }
         return appConfigData;
     }
 
-    private JSONObject getJSONFile(String fileName){
+    private JSONObject getJSONFile(String fileName) {
         JSONObject jsonFile = new JSONObject();
         try {
             jsonFile = new JSONObject(readFile(fileName));
@@ -88,7 +79,7 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
         return jsonFile;
     }
 
-    private boolean saveJSONFile(String fileName){
+    private boolean saveJSONFile(String fileName) {
         try {
             overWriteFile(fileName, appConfigData.toJsonObject().toString());
         } catch (IOException e) {
@@ -111,7 +102,7 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(openFileInput(fileName)));
         StringBuilder stringBuilder = new StringBuilder();
         String line = fileReader.readLine();
-        while(line != null){
+        while (line != null) {
             stringBuilder.append(line).append("\n");
             line = fileReader.readLine();
         }
@@ -119,9 +110,9 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
         return stringBuilder.toString();
     }
 
-    private boolean fileCheck(String fileName){
+    private boolean fileCheck(String fileName) {
         File file = new File(getFilesDir(), fileName);
-        if(!file.exists()){
+        if (!file.exists()) {
             try {
                 return file.createNewFile();
             } catch (IOException e) {

@@ -19,7 +19,7 @@ public class AppConfigData extends ConfigObservableImpl {
     private HashMap<Class, LinkedList<? extends ConfigData>> dataMap = new HashMap<>();
 
     public LinkedList<PageConfigData> getPageList() {
-        return (LinkedList<PageConfigData>)dataMap.get(PageConfigData.class);
+        return (LinkedList<PageConfigData>) dataMap.get(PageConfigData.class);
     }
 
     public void setPageList(final LinkedList<PageConfigData> pageList) {
@@ -27,17 +27,17 @@ public class AppConfigData extends ConfigObservableImpl {
         Collections.sort(dataMap.get(PageConfigData.class));
     }
 
-    public void addData(final PageConfigData data){
-        if(!dataMap.keySet().contains(PageConfigData.class)){
+    public void addData(final PageConfigData data) {
+        if (!dataMap.keySet().contains(PageConfigData.class)) {
             dataMap.put(PageConfigData.class, new LinkedList<PageConfigData>());
         }
-        ((LinkedList<PageConfigData>)dataMap.get(PageConfigData.class)).add(data);
+        ((LinkedList<PageConfigData>) dataMap.get(PageConfigData.class)).add(data);
         Collections.sort(dataMap.get(PageConfigData.class));
     }
 
-    public void setData(final PageConfigData data){
-        PageConfigData storedData = (PageConfigData)findDataByTypeAndKey(PageConfigData.class, data.getKey());
-        if(storedData != null) {
+    public void setData(final PageConfigData data) {
+        PageConfigData storedData = (PageConfigData) findDataByTypeAndKey(PageConfigData.class, data.getKey());
+        if (storedData != null) {
             storedData.setName(data.getName());
             storedData.setPageUrl(data.getPageUrl());
             storedData.setTags(data.getTags());
@@ -45,16 +45,16 @@ public class AppConfigData extends ConfigObservableImpl {
         }
     }
 
-    public void removeData(final PageConfigData data){
+    public void removeData(final PageConfigData data) {
         removeAnyData(data);
     }
 
-    private void removeAnyData(final ConfigData data){
-        dataMap.get(data.getClass()).remove(findDataByTypeAndKey(data.getClass(),data.Key));
+    private void removeAnyData(final ConfigData data) {
+        dataMap.get(data.getClass()).remove(findDataByTypeAndKey(data.getClass(), data.Key));
         Collections.sort(dataMap.get(PageConfigData.class));
     }
 
-    public void processChanges(final Collection<ChangeConfig> changeList){
+    public void processChanges(final Collection<ChangeConfig> changeList) {
         for (ChangeConfig changeConfig : changeList) {
             try {
                 getAppropriateMethod(this, changeConfig).invoke(this, changeConfig.getChangeData());
@@ -66,11 +66,11 @@ public class AppConfigData extends ConfigObservableImpl {
     }
 
     public static Method getAppropriateMethod(final Object object, final ChangeConfig changeConfig) throws NoSuchMethodException {
-        return object.getClass().getMethod(getProperMethodName(changeConfig.getChangeType()),changeConfig.getDataType());
+        return object.getClass().getMethod(getProperMethodName(changeConfig.getChangeType()), changeConfig.getDataType());
     }
 
-    private static String getProperMethodName(ChangeConfig.ChangeType type){
-        switch(type){
+    private static String getProperMethodName(ChangeConfig.ChangeType type) {
+        switch (type) {
             case Added:
                 return "addData";
             case Modified:
@@ -82,25 +82,25 @@ public class AppConfigData extends ConfigObservableImpl {
         }
     }
 
-    private ConfigData findDataByTypeAndKey(Class dataType, String key){
-        Iterator<ConfigData> iterator = (Iterator<ConfigData>)dataMap.get(dataType).iterator();
-        while(iterator.hasNext()){
+    private ConfigData findDataByTypeAndKey(Class dataType, String key) {
+        Iterator<ConfigData> iterator = (Iterator<ConfigData>) dataMap.get(dataType).iterator();
+        while (iterator.hasNext()) {
             ConfigData storedData = iterator.next();
-            if(storedData.getKey().equals(key)){
+            if (storedData.getKey().equals(key)) {
                 return storedData;
             }
         }
         return null;
     }
 
-    public AppConfigData(JSONObject jsonObject){
+    public AppConfigData(JSONObject jsonObject) {
         Iterator<String> jsonIterator = jsonObject.keys();
         try {
-            while(jsonIterator.hasNext()){
+            while (jsonIterator.hasNext()) {
                 String typeName = jsonIterator.next();
-                if(typeName.equals(PageConfigData.class.toString())){
+                if (typeName.equals(PageConfigData.class.toString())) {
                     LinkedList<PageConfigData> pageConfigList = getPageConfigList(jsonObject.getJSONArray(typeName));
-                    if(!pageConfigList.isEmpty()) {
+                    if (!pageConfigList.isEmpty()) {
                         dataMap.put(PageConfigData.class, pageConfigList);
                     }
                 }
@@ -110,10 +110,10 @@ public class AppConfigData extends ConfigObservableImpl {
         }
     }
 
-    private LinkedList<PageConfigData> getPageConfigList(JSONArray jsonArray){
+    private LinkedList<PageConfigData> getPageConfigList(JSONArray jsonArray) {
         LinkedList<PageConfigData> pageList = new LinkedList<>();
         try {
-            for(int i=0; i< jsonArray.length(); i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
                 pageList.add(new PageConfigData(jsonArray.getJSONObject(i)));
             }
         } catch (JSONException e) {
@@ -122,19 +122,19 @@ public class AppConfigData extends ConfigObservableImpl {
         return pageList;
     }
 
-    public JSONObject toJsonObject(){
+    public JSONObject toJsonObject() {
         JSONObject jsonObject = new JSONObject();
         Iterator<Class> typesIterator = dataMap.keySet().iterator();
         try {
-            while(typesIterator.hasNext()){
+            while (typesIterator.hasNext()) {
                 Class type = typesIterator.next();
                 JSONArray configData = new JSONArray();
-                Iterator<ConfigData> dataIterator = (Iterator<ConfigData>)dataMap.get(type).listIterator();
-                while(dataIterator.hasNext()) {
+                Iterator<ConfigData> dataIterator = (Iterator<ConfigData>) dataMap.get(type).listIterator();
+                while (dataIterator.hasNext()) {
                     ConfigData data = dataIterator.next();
                     configData.put(data.toJsonObject());
                 }
-                jsonObject.put(type.toString(),configData);
+                jsonObject.put(type.toString(), configData);
             }
         } catch (JSONException e) {
             e.printStackTrace();

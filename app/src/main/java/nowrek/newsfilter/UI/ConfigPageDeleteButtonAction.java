@@ -17,14 +17,14 @@ public class ConfigPageDeleteButtonAction implements Preference.OnPreferenceClic
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        String key = preference.getKey().substring(0,preference.getKey().indexOf(SettingsFragment.BUTTON_DELETE_SUFFIX));
-        PreferenceScreen screen = (PreferenceScreen)preference.getPreferenceManager().findPreference(key+SettingsFragment.PAGE_SUFFIX);
+        String key = preference.getKey().substring(0, preference.getKey().indexOf(SettingsFragment.BUTTON_DELETE_SUFFIX));
+        PreferenceScreen screen = (PreferenceScreen) preference.getPreferenceManager().findPreference(key + SettingsFragment.PAGE_SUFFIX);
         assert screen != null;
         Dialog dialog = screen.getDialog();
-        if(dialog != null){
+        if (dialog != null) {
             dialog.dismiss();
         }
-        settingsFragment.addChange(new ChangeConfig<>(ChangeConfig.ChangeType.Removed, new PageConfigData(key,null,null,null)));
+        settingsFragment.addChange(new ChangeConfig<>(ChangeConfig.ChangeType.Removed, new PageConfigData(key, null, null, null)));
         return true;
     }
 }

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class PageConfigData extends ConfigData{
+public class PageConfigData extends ConfigData {
     private String PageUrl;
     private ArrayList<String> Tags;
 
@@ -29,8 +29,8 @@ public class PageConfigData extends ConfigData{
         Tags = tags;
     }
 
-    public String getJoinedTags(){
-        return joinString(",",getTags());
+    public String getJoinedTags() {
+        return joinString(",", getTags());
     }
 
     public PageConfigData(String key, String name, String pageUrl, ArrayList<String> tags) {
@@ -39,7 +39,7 @@ public class PageConfigData extends ConfigData{
         setTags(tags);
     }
 
-    PageConfigData(JSONObject pageConfigJson){
+    PageConfigData(JSONObject pageConfigJson) {
         try {
             setKey(pageConfigJson.getString("key"));
             setName(pageConfigJson.getString("name"));
@@ -51,7 +51,7 @@ public class PageConfigData extends ConfigData{
     }
 
     @Override
-    public JSONObject toJsonObject(){
+    public JSONObject toJsonObject() {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("key", getKey());
@@ -64,12 +64,12 @@ public class PageConfigData extends ConfigData{
         return jsonObject;
     }
 
-    private String joinString(String delimiter, Iterable<String> elements ){
+    private String joinString(String delimiter, Iterable<String> elements) {
         Iterator<String> iterator = elements.iterator();
         StringBuilder builder = new StringBuilder();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             builder.append(iterator.next());
-            if(iterator.hasNext()){
+            if (iterator.hasNext()) {
                 builder.append(delimiter);
             }
         }

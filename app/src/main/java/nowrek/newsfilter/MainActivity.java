@@ -36,13 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent1 = new Intent(this, SlidingActivity.class);
         startActivity(intent1);
-
-        /*
-        Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
-        */
-
         //testUrlDownload();
     }
 
@@ -53,11 +46,11 @@ public class MainActivity extends AppCompatActivity {
     public native String stringFromJNI();
 
     /**
-     *  Temporary function to test URL downloads
+     * Temporary function to test URL downloads
      */
     private void testUrlDownload() {
         URLHandle testUrl = new URLHandle("http://www.google.com");
-        LinkedList<URLHandle> testUrlList= new LinkedList<>();
+        LinkedList<URLHandle> testUrlList = new LinkedList<>();
         testUrlList.add(testUrl);
 
         new Thread(new PageDownloadTask(testUrlList)).start();
