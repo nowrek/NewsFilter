@@ -23,7 +23,7 @@ public class PageDownloadTask implements Runnable {
             try {
                 String htmlPage = getPageHTML(_inputList.get(i));
                 Log.d("Page", htmlPage);
-            } catch (Exception exception){
+            } catch (Exception exception) {
                 exception.printStackTrace();
             }
         }

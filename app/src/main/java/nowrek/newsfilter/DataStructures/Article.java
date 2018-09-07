@@ -4,16 +4,16 @@ public class Article {
     private URLHandle _articleOrigin;
     private String _content;
 
-    Article(URLHandle inArticleOrigin, String inContent){
+    Article(URLHandle inArticleOrigin, String inContent) {
         _articleOrigin = inArticleOrigin;
         _content = inContent;
     }
 
-    public String getContent(){
+    public String getContent() {
         return _content;
     }
 
-    public URLHandle getArticleOrigin(){
+    public URLHandle getArticleOrigin() {
         return _articleOrigin;
     }
 }

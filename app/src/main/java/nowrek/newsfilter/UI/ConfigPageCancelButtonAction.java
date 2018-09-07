@@ -14,11 +14,11 @@ public class ConfigPageCancelButtonAction implements Preference.OnPreferenceClic
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        String key = preference.getKey().substring(0,preference.getKey().indexOf(SettingsFragment.BUTTON_CANCEL_SUFFIX));
-        PreferenceScreen screen = (PreferenceScreen)preference.getPreferenceManager().findPreference(key+SettingsFragment.PAGE_SUFFIX);
+        String key = preference.getKey().substring(0, preference.getKey().indexOf(SettingsFragment.BUTTON_CANCEL_SUFFIX));
+        PreferenceScreen screen = (PreferenceScreen) preference.getPreferenceManager().findPreference(key + SettingsFragment.PAGE_SUFFIX);
         assert screen != null;
         Dialog dialog = screen.getDialog();
-        if(dialog != null){
+        if (dialog != null) {
             dialog.dismiss();
         }
         return true;

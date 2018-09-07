@@ -2,7 +2,6 @@ package nowrek.newsfilter.Utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import nowrek.newsfilter.DataStructures.ChangeConfig;
 
@@ -10,7 +9,7 @@ public class ConfigObservableImpl implements ConfigObservable {
 
     private ArrayList<ConfigChangeListener> registeredListeners;
 
-    protected ConfigObservableImpl(){
+    protected ConfigObservableImpl() {
         registeredListeners = new ArrayList<>();
     }
 
