@@ -6,7 +6,18 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.LinkedList;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.X509TrustManager;
 
 import nowrek.newsfilter.DataStructures.Article;
 import nowrek.newsfilter.DataStructures.URLHandle;
@@ -17,8 +28,12 @@ public class PageDownloadTask extends AsyncTask<LinkedList<URLHandle>, Integer, 
     private SlidingActivity activity;
 
     private String getPageHTML(URLHandle inUrlHandle) throws IOException {
-        Document doc = Jsoup.connect(inUrlHandle.getUrl()).get();
-        return doc.html();
+        try {
+            Document doc = Jsoup.connect(inUrlHandle.getUrl()).get();
+            return doc.html();
+        } catch (Exception exception) {
+            return exception.getMessage();
+        }
     }
 
     public PageDownloadTask(SlidingActivity activity) {

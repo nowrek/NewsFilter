@@ -3,6 +3,7 @@ package nowrek.newsfilter.UI;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +38,9 @@ public class BasicFragment extends Fragment {
         this.pageTextViewId = getArguments().getInt("pageTextViewId");
 
         View rootView = inflater.inflate(R.layout.fragment_basic_layout, container, false);
-        TextView textView = (TextView) rootView.findViewById(R.id.text_view);
+        TextView textView = rootView.findViewById(R.id.text_view);
         textView.setText(pageText);
+        textView.setMovementMethod(new ScrollingMovementMethod());
 
         return rootView;
     }
