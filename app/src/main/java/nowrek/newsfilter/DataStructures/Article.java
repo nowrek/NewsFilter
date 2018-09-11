@@ -4,7 +4,7 @@ public class Article {
     private URLHandle _articleOrigin;
     private String _content;
 
-    Article(URLHandle inArticleOrigin, String inContent) {
+    public Article(URLHandle inArticleOrigin, String inContent) {
         _articleOrigin = inArticleOrigin;
         _content = inContent;
     }

@@ -3,6 +3,7 @@ package nowrek.newsfilter.UI;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,7 @@ import android.widget.TextView;
 
 import nowrek.newsfilter.R;
 
-public class BasicFragment extends Fragment implements UpdatableFragments {
+public class BasicFragment extends Fragment {
     private String pageText;
     private String pageTag;
     private int pageTextViewId;
@@ -37,8 +38,9 @@ public class BasicFragment extends Fragment implements UpdatableFragments {
         this.pageTextViewId = getArguments().getInt("pageTextViewId");
 
         View rootView = inflater.inflate(R.layout.fragment_basic_layout, container, false);
-        TextView textView = (TextView) rootView.findViewById(R.id.text_view);
+        TextView textView = rootView.findViewById(R.id.text_view);
         textView.setText(pageText);
+        textView.setMovementMethod(new ScrollingMovementMethod());
 
         return rootView;
     }
@@ -46,9 +48,5 @@ public class BasicFragment extends Fragment implements UpdatableFragments {
     @Override
     public void onResume() {
         super.onResume();
-    }
-
-    @Override
-    public void update(String textToUpdate) {
     }
 }
