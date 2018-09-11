@@ -1,5 +1,6 @@
 package nowrek.newsfilter;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,13 +16,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import nowrek.newsfilter.DataStructures.AppConfigData;
+import nowrek.newsfilter.DataStructures.Article;
 import nowrek.newsfilter.DataStructures.ChangeConfig;
 import nowrek.newsfilter.DataStructures.PageConfigData;
+import nowrek.newsfilter.DataStructures.URLHandle;
 import nowrek.newsfilter.UI.ScreenSlidePagerAdapter;
 import nowrek.newsfilter.Utils.ConfigChangeListener;
+import nowrek.newsfilter.WorkerThreads.PageDownloadTask;
 
 public class SlidingActivity extends AppCompatActivity implements ConfigChangeListener {
     private ViewPager viewPager;
@@ -48,18 +53,37 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
     public void onConfigChange(Collection<ChangeConfig> changeList) {
         saveJSONFile(CONFIG_FILE_NAME);
         getConfiguration();
-        updateFragments();
-        Log.v("Config change", "Config change after clicking apply");
-        if (this.pagerAdapter != null)
-            this.pagerAdapter.notifyDataSetChanged();
+        downloadPages();
+
     }
 
-    private void updateFragments() {
+    private void downloadPages() {
         pagerAdapter.clearPages();
-        List<PageConfigData> pageList = appConfigData.getPageList();
-        for (PageConfigData page : pageList) {
-            pagerAdapter.addPage(page.getPageUrl(), "Page text of page " + page.getPageUrl());
+
+        LinkedList<URLHandle>  urlHandles = new LinkedList<>();
+
+        for (PageConfigData page : appConfigData.getPageList()) {
+            URLHandle pageUrlHandle = new URLHandle(page.getPageUrl());
+            urlHandles.add(pageUrlHandle);
         }
+
+        try {
+            Log.v("CONCURRENT", "RUNNING NEW PAGE DOWNLOAD TASK!");
+            PageDownloadTask pageDownloadTask = new PageDownloadTask(this);
+            pageDownloadTask.execute(urlHandles);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public void displayArticles(LinkedList<Article> articles) {
+
+        for (Article article : articles) {
+            pagerAdapter.addPage(article.getArticleOrigin().getUrl(),  article.getContent());
+        }
+
+        if (this.pagerAdapter != null)
+            this.pagerAdapter.notifyDataSetChanged();
     }
 
     public AppConfigData getConfiguration() {

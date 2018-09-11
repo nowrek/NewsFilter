@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Temporary function to test URL downloads
      */
+    /*
     private void testUrlDownload() {
         URLHandle testUrl = new URLHandle("http://www.google.com");
         LinkedList<URLHandle> testUrlList = new LinkedList<>();
@@ -56,4 +57,5 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new PageDownloadTask(testUrlList)).start();
 
     }
+   */
 }

@@ -9,8 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import nowrek.newsfilter.R;
+import nowrek.newsfilter.Utils.ResponseReceiver;
 
-public class BasicFragment extends Fragment implements UpdatableFragments {
+public class BasicFragment extends Fragment {
     private String pageText;
     private String pageTag;
     private int pageTextViewId;
@@ -46,9 +47,5 @@ public class BasicFragment extends Fragment implements UpdatableFragments {
     @Override
     public void onResume() {
         super.onResume();
-    }
-
-    @Override
-    public void update(String textToUpdate) {
     }
 }
