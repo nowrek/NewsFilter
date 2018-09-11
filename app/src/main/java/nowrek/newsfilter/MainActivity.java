@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         try {
             enableSSLSocket();
-        } catch (Exception exception ){
+        } catch (Exception exception) {
             exception.printStackTrace();
             finish();
         }
@@ -93,14 +93,4 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Temporary function to test URL downloads
      */
-    /*
-    private void testUrlDownload() {
-        URLHandle testUrl = new URLHandle("http://www.google.com");
-        LinkedList<URLHandle> testUrlList = new LinkedList<>();
-        testUrlList.add(testUrl);
-
-        new Thread(new PageDownloadTask(testUrlList)).start();
-
-    }
-   */
 }
