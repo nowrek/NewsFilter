@@ -60,7 +60,7 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
     private void downloadPages() {
         pagerAdapter.clearPages();
 
-        LinkedList<URLHandle>  urlHandles = new LinkedList<>();
+        LinkedList<URLHandle> urlHandles = new LinkedList<>();
 
         for (PageConfigData page : appConfigData.getPageList()) {
             URLHandle pageUrlHandle = new URLHandle(page.getPageUrl());
@@ -79,7 +79,7 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
     public void displayArticles(LinkedList<Article> articles) {
 
         for (Article article : articles) {
-            pagerAdapter.addPage(article.getArticleOrigin().getUrl(),  article.getContent());
+            pagerAdapter.addPage(article.getArticleOrigin().getUrl(), article.getContent());
         }
 
         if (this.pagerAdapter != null)

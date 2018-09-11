@@ -1,8 +1,6 @@
 package nowrek.newsfilter.WorkerThreads;
 
-import android.app.Activity;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,7 +11,6 @@ import java.util.LinkedList;
 import nowrek.newsfilter.DataStructures.Article;
 import nowrek.newsfilter.DataStructures.URLHandle;
 import nowrek.newsfilter.SlidingActivity;
-import nowrek.newsfilter.Utils.ResponseReceiver;
 
 public class PageDownloadTask extends AsyncTask<LinkedList<URLHandle>, Integer, LinkedList<Article>> {
 

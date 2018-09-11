@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import nowrek.newsfilter.R;
-import nowrek.newsfilter.Utils.ResponseReceiver;
 
 public class BasicFragment extends Fragment {
     private String pageText;
