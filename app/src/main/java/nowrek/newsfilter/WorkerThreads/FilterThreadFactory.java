@@ -6,15 +6,15 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import nowrek.newsfilter.DataStructures.Article;
+import nowrek.newsfilter.DataStructures.Page;
 
 public class FilterThreadFactory {
-    private final BlockingQueue<Article> _inputQueue;
+    private final BlockingQueue<Page> _inputQueue;
     private final Handler _uiHandler;
     private final ExecutorService _threadPool;
     private final int _threadNumber;
 
-    public FilterThreadFactory(BlockingQueue<Article> inInputQueue, Handler inUiHandler, int inThreadNumber) {
+    public FilterThreadFactory(BlockingQueue<Page> inInputQueue, Handler inUiHandler, int inThreadNumber) {
         _inputQueue = inInputQueue;
         _uiHandler = inUiHandler;
         _threadPool = Executors.newFixedThreadPool(inThreadNumber);
@@ -29,10 +29,10 @@ public class FilterThreadFactory {
 }
 
 class FilterTask implements Runnable {
-    private final BlockingQueue<Article> _inputQueue;
+    private final BlockingQueue<Page> _inputQueue;
     private final Handler _uiHandler;
 
-    FilterTask(BlockingQueue<Article> inInputQueue, Handler inUiHandler) {
+    FilterTask(BlockingQueue<Page> inInputQueue, Handler inUiHandler) {
         _inputQueue = inInputQueue;
         _uiHandler = inUiHandler;
     }
@@ -42,9 +42,9 @@ class FilterTask implements Runnable {
         boolean interrupted = false;
         while (!interrupted) {
             try {
-                Article articleToProcess = _inputQueue.take();
-                if (articleToProcess.getArticleOrigin().getFilterSet().filterArticle(articleToProcess)) {
-                    _uiHandler.dispatchMessage(_uiHandler.obtainMessage(0, articleToProcess));
+                Page pageToProcess = _inputQueue.take();
+                if (pageToProcess.getPageOrigin().getFilterSet().filterArticle(pageToProcess)) {
+                    _uiHandler.dispatchMessage(_uiHandler.obtainMessage(0, pageToProcess));
                 }
             } catch (InterruptedException ex) {
                 interrupted = true;

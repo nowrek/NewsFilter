@@ -1,6 +1,5 @@
 package nowrek.newsfilter;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -17,10 +16,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 import nowrek.newsfilter.DataStructures.AppConfigData;
-import nowrek.newsfilter.DataStructures.Article;
+import nowrek.newsfilter.DataStructures.Page;
 import nowrek.newsfilter.DataStructures.ChangeConfig;
 import nowrek.newsfilter.DataStructures.PageConfigData;
 import nowrek.newsfilter.DataStructures.URLHandle;
@@ -76,10 +74,13 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
         }
     }
 
-    public void displayArticles(LinkedList<Article> articles) {
 
-        for (Article article : articles) {
-            pagerAdapter.addPage(article.getArticleOrigin().getUrl(), article.getContent());
+
+    public void displayArticles(LinkedList<Page> pages) {
+
+        for (Page page : pages) {
+
+            pagerAdapter.addPage(page.getPageOrigin().getUrl(), page.getContent());
         }
 
         if (this.pagerAdapter != null)
