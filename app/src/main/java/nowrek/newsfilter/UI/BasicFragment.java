@@ -41,7 +41,6 @@ public class BasicFragment extends Fragment {
         TextView textView = rootView.findViewById(R.id.text_view);
         textView.setText(pageText);
         textView.setMovementMethod(new ScrollingMovementMethod());
-
         return rootView;
     }
 
