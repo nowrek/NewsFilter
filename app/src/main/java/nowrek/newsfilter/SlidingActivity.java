@@ -1,6 +1,9 @@
 package nowrek.newsfilter;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,6 +27,8 @@ import nowrek.newsfilter.DataStructures.PageConfigData;
 import nowrek.newsfilter.DataStructures.URLHandle;
 import nowrek.newsfilter.UI.ScreenSlidePagerAdapter;
 import nowrek.newsfilter.Utils.ConfigChangeListener;
+import nowrek.newsfilter.WorkerThreads.NFThreadFactory;
+import nowrek.newsfilter.WorkerThreads.NFWorkQueue;
 import nowrek.newsfilter.WorkerThreads.PageDownloadTask;
 
 public class SlidingActivity extends AppCompatActivity implements ConfigChangeListener {
@@ -31,6 +36,9 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
     private ScreenSlidePagerAdapter pagerAdapter;
     private AppConfigData appConfigData;
     private static final String CONFIG_FILE_NAME = "appConfig.json";
+    private NFWorkQueue workQueue;
+    private NFThreadFactory threadPool;
+    private Handler uiHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,37 +46,25 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
 
         setContentView(R.layout.activity_screen_slide);
         fileCheck(CONFIG_FILE_NAME);
-        getConfiguration();
-        appConfigData.registerChangeListener(this);
-
-        // Instantiate a ViewPager and a PagerAdapter.
-        viewPager = findViewById(R.id.pager);
-        pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(pagerAdapter);
+        setUpConfigData();
+        setUpThreadStructure();
+        setUpPager();
     }
 
     @Override
     public void onConfigChange(Collection<ChangeConfig> changeList) {
         saveJSONFile(CONFIG_FILE_NAME);
-        getConfiguration();
+        setUpConfigData();
         downloadPages();
 
     }
 
     private void downloadPages() {
         pagerAdapter.clearPages();
-
-        LinkedList<URLHandle> urlHandles = new LinkedList<>();
-
-        for (PageConfigData page : appConfigData.getPageList()) {
-            URLHandle pageUrlHandle = new URLHandle(page.getPageUrl());
-            urlHandles.add(pageUrlHandle);
-        }
-
+        workQueue.addTasks(appConfigData.getURLList());
         try {
             Log.v("CONCURRENT", "RUNNING NEW PAGE DOWNLOAD TASK!");
-            PageDownloadTask pageDownloadTask = new PageDownloadTask(this);
-            pageDownloadTask.execute(urlHandles);
+            threadPool.startProcessing();
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -77,20 +73,41 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
 
 
     public void displayArticles(LinkedList<Page> pages) {
-
         for (Page page : pages) {
-
             pagerAdapter.addPage(page.getPageOrigin().getUrl(), page.getContent());
         }
+        pagerAdapter.notifyDataSetChanged();
+    }
 
-        if (this.pagerAdapter != null)
-            this.pagerAdapter.notifyDataSetChanged();
+    private void setUpConfigData(){
+        if(appConfigData != null) appConfigData.unregisterChangeListener(this);
+        appConfigData = new AppConfigData(getJSONFile(CONFIG_FILE_NAME));
+        appConfigData.registerChangeListener(this);
+    }
+
+    private void setUpThreadStructure(){
+        uiHandler = new Handler(Looper.getMainLooper()){
+            @Override
+            public void handleMessage(Message msg){
+                if(Page.class.isInstance(msg.obj)){
+                    Page page = (Page) msg.obj;
+                    pagerAdapter.addOrReplacePage(page.getPageOrigin().getUrl(), page.getContent());
+                    pagerAdapter.notifyDataSetChanged();
+                }
+            }
+        };
+        workQueue = new NFWorkQueue(uiHandler);
+        threadPool = new NFThreadFactory(workQueue,3);
+    }
+
+    private void setUpPager(){
+        // Instantiate a ViewPager and a PagerAdapter.
+        viewPager = findViewById(R.id.pager);
+        pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(pagerAdapter);
     }
 
     public AppConfigData getConfiguration() {
-        if (appConfigData == null) {
-            appConfigData = new AppConfigData(getJSONFile(CONFIG_FILE_NAME));
-        }
         return appConfigData;
     }
 
