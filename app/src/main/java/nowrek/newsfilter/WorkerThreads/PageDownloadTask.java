@@ -1,33 +1,30 @@
 package nowrek.newsfilter.WorkerThreads;
 
-import android.os.AsyncTask;
+import android.os.Handler;
+import android.util.Log;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.LinkedList;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import nowrek.newsfilter.DataStructures.Page;
 import nowrek.newsfilter.DataStructures.URLHandle;
-import nowrek.newsfilter.SlidingActivity;
 import nowrek.newsfilter.Utils.ArticlesExtractor;
 
-public class PageDownloadTask extends AsyncTask<LinkedList<URLHandle>, Integer, LinkedList<Page>> {
+public class PageDownloadTask implements Runnable {
+    private final URLHandle _urlHandle;
+    private final Handler _uiHandler;
+    private final ThreadPoolExecutor _tpe;
 
-    private SlidingActivity activity;
-
-    private String getPageHTML(URLHandle inUrlHandle) throws IOException {
-        try {
-            Document doc = Jsoup.connect(inUrlHandle.getUrl()).get();
-            return doc.html();
-        } catch (Exception exception) {
-            return exception.getMessage();
-        }
+    PageDownloadTask(URLHandle urlHandle, ThreadPoolExecutor tpe, Handler uiHandler){
+        _urlHandle = urlHandle;
+        _tpe = tpe;
+        _uiHandler = uiHandler;
     }
 
-    private LinkedList<String> getPageArticles(URLHandle inUrlHandle) throws IOException {
+    private LinkedList<String> getPageArticles(URLHandle inUrlHandle){
         ArticlesExtractor extractor = new ArticlesExtractor();
 
         try {
@@ -40,27 +37,10 @@ public class PageDownloadTask extends AsyncTask<LinkedList<URLHandle>, Integer, 
         }
     }
 
-    public PageDownloadTask(SlidingActivity activity) {
-        this.activity = activity;
-    }
-
     @Override
-    protected LinkedList<Page> doInBackground(LinkedList<URLHandle>... urlHandles) {
-        LinkedList<URLHandle> urlList = urlHandles[0];
-        LinkedList<Page> pages = new LinkedList<>();
-        for (int i = 0; i < urlList.size(); ++i) {
-            try {
-                pages.add(new Page(urlList.get(i), getPageArticles(urlList.get(i))));
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        }
-
-        return pages;
-    }
-
-    @Override
-    protected void onPostExecute(LinkedList<Page> pages) {
-        activity.displayArticles(pages);
+    public void run(){
+        Log.v("PageDownloadTask", "RUNNING PAGE DOWNLOAD TASK FOR: "+_urlHandle.getUrl());
+        Page result = new Page(_urlHandle, getPageArticles(_urlHandle));
+        _tpe.execute(new FilterTask(result,_uiHandler));
     }
 }
