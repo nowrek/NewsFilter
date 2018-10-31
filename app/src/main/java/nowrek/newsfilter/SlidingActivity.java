@@ -22,7 +22,6 @@ import java.util.concurrent.BlockingQueue;
 
 import nowrek.newsfilter.DataStructures.AppConfigData;
 import nowrek.newsfilter.DataStructures.Article;
-import nowrek.newsfilter.DataStructures.Page;
 import nowrek.newsfilter.DataStructures.ChangeConfig;
 import nowrek.newsfilter.UI.ScreenSlidePagerAdapter;
 import nowrek.newsfilter.Utils.ConfigChangeListener;
@@ -58,7 +57,6 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
     }
 
     private void downloadPages() {
-        pagerAdapter.clearPages();
         pagerAdapter.setPages(appConfigData.getURLListAsString());
         threadPool.executePageDownloadTasks(appConfigData.getURLList());
     }
@@ -75,8 +73,8 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
             public void handleMessage(Message msg){
                 super.handleMessage(msg);
                 if(Article.class.isInstance(msg.obj)){
-                    Article article = (Article) msg.obj;
-                    pagerAdapter.addArticle(article.getArticleOrigin().getUrl(), article.getContent());
+                    pagerAdapter.addArticle((Article) msg.obj);
+                    pagerAdapter.notifyDataSetChanged();
                 }
             }
         };

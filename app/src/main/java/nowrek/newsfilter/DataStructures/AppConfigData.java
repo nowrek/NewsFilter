@@ -1,5 +1,7 @@
 package nowrek.newsfilter.DataStructures;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,9 +103,7 @@ public class AppConfigData extends ConfigObservableImpl {
     }
 
     private ConfigData findDataByTypeAndKey(Class dataType, String key) {
-        Iterator<ConfigData> iterator = (Iterator<ConfigData>) dataMap.get(dataType).iterator();
-        while (iterator.hasNext()) {
-            ConfigData storedData = iterator.next();
+        for(ConfigData storedData : dataMap.get(dataType)){
             if (storedData.getKey().equals(key)) {
                 return storedData;
             }
@@ -124,7 +124,7 @@ public class AppConfigData extends ConfigObservableImpl {
                 }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(this.getClass().getName(), "EXCEPTION WHILE DESERIALIZING FROM JSON", e);
         }
     }
 
@@ -135,7 +135,7 @@ public class AppConfigData extends ConfigObservableImpl {
                 pageList.add(new PageConfigData(jsonArray.getJSONObject(i)));
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(this.getClass().getName(), "EXCEPTION WHILE GETTING PAGE CONFIG LIST FROM JSON", e);
         }
         return pageList;
     }
@@ -155,7 +155,7 @@ public class AppConfigData extends ConfigObservableImpl {
                 jsonObject.put(type.toString(), configData);
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(this.getClass().getName(), "EXCEPTION WHILE CONVERTING TO JSON", e);
         }
         return jsonObject;
     }

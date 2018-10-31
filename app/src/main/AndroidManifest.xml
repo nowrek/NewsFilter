@@ -18,6 +18,10 @@
         </activity>
         <activity android:name=".SlidingActivity" >
         </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
     <supports-screens android:resizeable="true"
                           android:smallScreens="true"

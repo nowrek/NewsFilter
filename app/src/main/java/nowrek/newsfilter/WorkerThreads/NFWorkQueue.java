@@ -1,6 +1,5 @@
 package nowrek.newsfilter.WorkerThreads;
 
-import android.os.Handler;
 import android.support.annotation.NonNull;
 
 import java.util.Arrays;
@@ -28,10 +27,6 @@ public class NFWorkQueue implements BlockingQueue<Runnable>{
         _taskQueues = new HashMap<>();
         _taskQueues.put(TaskType.FilterTask, new LinkedBlockingQueue<Runnable>());
         _taskQueues.put(TaskType.PageDownloadTask, new LinkedBlockingQueue<Runnable>());
-    }
-    public NFWorkQueue(int priorityMarker){
-        this();
-        _priorityMarker = priorityMarker;
     }
 
     private BlockingQueue<Runnable> getCurrentQueue(){

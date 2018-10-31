@@ -89,8 +89,4 @@ public class MainActivity extends AppCompatActivity {
      * which is packaged with this application.
      */
     public native String stringFromJNI();
-
-    /**
-     * Temporary function to test URL downloads
-     */
 }

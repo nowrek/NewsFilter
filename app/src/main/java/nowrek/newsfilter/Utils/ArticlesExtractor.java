@@ -1,12 +1,13 @@
 package nowrek.newsfilter.Utils;
 
+import android.util.Log;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,13 +21,7 @@ public class ArticlesExtractor {
         _pdt = pdt;
     }
 
-    public LinkedList<String> extractArticles(Document pageDoc) {
-        Elements elements = pageDoc.select("article").not("a").not("figure").not("div").not("aside").not("span").not("figcaption").not("ul");
-
-        return new LinkedList(elements.eachText());
-    }
-
-    private LinkedList<String> extractFirstArticle(Document pageDoc) {
+    private void extractFirstArticle(Document pageDoc) {
         pageDoc = pageDoc.removeAttr("a").ownerDocument();
         pageDoc = pageDoc.removeAttr("figure").ownerDocument();
         pageDoc = pageDoc.removeAttr("div").ownerDocument();
@@ -38,13 +33,10 @@ public class ArticlesExtractor {
 
 
         Element element = pageDoc.select("article").not("a").not("figure").not("div").not("aside").not("span").not("figcaption").not("ul").not("script").first();
-        LinkedList<String> elementList = new LinkedList<>();
         if (element != null) {
-            elementList.add(element.text());
-            _pdt.articleFound(element.text());
+            //TODO wyciagnac naglowek zwykle miedzy tagami h1 lub h2
+            _pdt.articleFound(element.baseUri(), element.text());
         }
-
-        return elementList;
     }
 
     private HashSet<String> removeDuplicateLinks(Elements links) {
@@ -59,9 +51,7 @@ public class ArticlesExtractor {
         return hashSet;
     }
 
-    public LinkedList<String> extractArticlesOneLevelDown(Document pageDoc, String mainPageUrl) {
-        LinkedList<String> extractedArticles = new LinkedList<>();
-
+    public void extractArticlesOneLevelDown(Document pageDoc, String mainPageUrl) {
         Elements articles = pageDoc.select("article");
 
         for (Element article : articles) {
@@ -74,14 +64,12 @@ public class ArticlesExtractor {
                 if (matcher.find()) {
                     try {
                         Document doc = Jsoup.connect(link).get();
-                        extractedArticles.addAll(extractFirstArticle(doc));
+                        extractFirstArticle(doc);
                     } catch (Exception exception) {
-                        exception.printStackTrace();
+                        Log.e("ArticleExtractor", "EXCEPTION IN ARTICLE EXTRACTOR",exception);
                     }
                 }
             }
         }
-
-        return extractedArticles;
     }
 }
