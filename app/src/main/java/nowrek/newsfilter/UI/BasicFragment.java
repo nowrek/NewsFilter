@@ -9,21 +9,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.LinkedList;
+
 import nowrek.newsfilter.R;
 
 public class BasicFragment extends Fragment {
-    private String pageText;
     private String pageTag;
+    private LinkedList<String> articles = new LinkedList<>();
     private int pageTextViewId;
 
-    public static BasicFragment newInstance(String pageTag, String pageText, int pageTextViewId) {
+    public static BasicFragment newInstance(String pageTag, int pageTextViewId) {
         BasicFragment f = new BasicFragment();
         Bundle b = new Bundle();
         b.putString("pageTag", pageTag);
-        b.putString("pageText", pageText);
         b.putInt("pageTextViewId", pageTextViewId);
         f.setArguments(b);
         return f;
+    }
+
+    public void addArticle(String content){
+        articles.add(content);
+        articles.add("\n------------------------------\n");
     }
 
     @Override
@@ -34,12 +40,12 @@ public class BasicFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.pageTag = getArguments().getString("pageTag");
-        this.pageText = getArguments().getString("pageText");
         this.pageTextViewId = getArguments().getInt("pageTextViewId");
-
         View rootView = inflater.inflate(R.layout.fragment_basic_layout, container, false);
         TextView textView = rootView.findViewById(R.id.text_view);
-        textView.setText(pageText);
+        for(String article : articles){
+            textView.append(article);
+        }
         textView.setMovementMethod(new ScrollingMovementMethod());
 
         return rootView;

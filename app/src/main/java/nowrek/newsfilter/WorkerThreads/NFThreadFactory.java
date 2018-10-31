@@ -7,6 +7,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import nowrek.newsfilter.DataStructures.Article;
 import nowrek.newsfilter.DataStructures.Page;
 import nowrek.newsfilter.DataStructures.URLHandle;
 
@@ -20,7 +21,9 @@ public class NFThreadFactory extends ThreadPoolExecutor {
 
     public void executeFilterPageTasks(Collection<Page> pages){
         for(Page page : pages){
-            this.execute(new FilterTask(page, _uiHandler));
+            for(Article art : page.getArticleList()) {
+                this.execute(new FilterTask(art, _uiHandler));
+            }
         }
     }
 

@@ -10,7 +10,15 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import nowrek.newsfilter.WorkerThreads.PageDownloadTask;
+
 public class ArticlesExtractor {
+
+    private PageDownloadTask _pdt;
+
+    public ArticlesExtractor(PageDownloadTask pdt){
+        _pdt = pdt;
+    }
 
     public LinkedList<String> extractArticles(Document pageDoc) {
         Elements elements = pageDoc.select("article").not("a").not("figure").not("div").not("aside").not("span").not("figcaption").not("ul");
@@ -31,7 +39,11 @@ public class ArticlesExtractor {
 
         Element element = pageDoc.select("article").not("a").not("figure").not("div").not("aside").not("span").not("figcaption").not("ul").not("script").first();
         LinkedList<String> elementList = new LinkedList<>();
-        if (element != null) {elementList.add(element.text());}
+        if (element != null) {
+            elementList.add(element.text());
+            _pdt.articleFound(element.text());
+        }
+
         return elementList;
     }
 

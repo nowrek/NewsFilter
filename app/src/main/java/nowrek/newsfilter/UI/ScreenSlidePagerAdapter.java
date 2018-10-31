@@ -34,32 +34,39 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         return pageFragments.size();
     }
 
-    public void addPage(String fragmentTag, String pageText) {
+    private void addPage(String fragmentTag) {
         int generatedId = View.generateViewId();
-        BasicFragment fragment = BasicFragment.newInstance(fragmentTag, pageText, generatedId);
+        BasicFragment fragment = BasicFragment.newInstance(fragmentTag, generatedId);
         pageFragments.add(fragment);
         fragmentPositionTagMap.put(fragmentTag, pageFragments.indexOf(fragment));
         fragmentPositionTextViewIdMap.put(pageFragments.indexOf(fragment), generatedId);
     }
 
-    public void addOrReplacePage(String fragmentTag, String pageText){
+    public void addArticle(String fragmentTag, String articleText){
         if(fragmentPositionTagMap.containsKey(fragmentTag)) {
             Integer position = fragmentPositionTagMap.get(fragmentTag);
-            Fragment frag = pageFragments.get(position);
-            FragmentTransaction ft = _fm.beginTransaction();
-            ft.remove(frag);
-            ft.commit();
-            pageFragments.remove(position.intValue());
-
+            BasicFragment frag = (BasicFragment)pageFragments.get(position);
+            frag.addArticle(articleText);
+            _fm.beginTransaction().detach(frag).attach(frag).commit();
         }
-        addPage(fragmentTag, pageText);
+    }
+
+    public void setPages(List<String> tagList){
+        for(String tag : tagList){
+            addPage(tag);
+        }
+        notifyDataSetChanged();
     }
 
     public void clearPages() {
-        for (int i = 1; i < pageFragments.size(); ++i)
+        FragmentTransaction ft = _fm.beginTransaction();
+        for (int i = 1; i < pageFragments.size(); ++i){
+            ft.detach(pageFragments.get(i));
             pageFragments.remove(i);
-
+        }
+        ft.commit();
         fragmentPositionTagMap.clear();
         fragmentPositionTextViewIdMap.clear();
+
     }
 }

@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import java.util.LinkedList;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import nowrek.newsfilter.DataStructures.Article;
 import nowrek.newsfilter.DataStructures.Page;
 import nowrek.newsfilter.DataStructures.URLHandle;
 import nowrek.newsfilter.Utils.ArticlesExtractor;
@@ -25,7 +26,7 @@ public class PageDownloadTask implements Runnable {
     }
 
     private LinkedList<String> getPageArticles(URLHandle inUrlHandle){
-        ArticlesExtractor extractor = new ArticlesExtractor();
+        ArticlesExtractor extractor = new ArticlesExtractor(this);
 
         try {
             Document doc = Jsoup.connect(inUrlHandle.getUrl()).get();
@@ -37,10 +38,13 @@ public class PageDownloadTask implements Runnable {
         }
     }
 
+    public void articleFound(String content){
+        _tpe.execute(new FilterTask(new Article(_urlHandle, content), _uiHandler));
+    }
+
     @Override
     public void run(){
         Log.v("PageDownloadTask", "RUNNING PAGE DOWNLOAD TASK FOR: "+_urlHandle.getUrl());
-        Page result = new Page(_urlHandle, getPageArticles(_urlHandle));
-        _tpe.execute(new FilterTask(result,_uiHandler));
+        Page page = new Page(_urlHandle, getPageArticles(_urlHandle));
     }
 }

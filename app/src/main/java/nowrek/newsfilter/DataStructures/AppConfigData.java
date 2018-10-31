@@ -22,6 +22,15 @@ public class AppConfigData extends ConfigObservableImpl {
         return (LinkedList<PageConfigData>) dataMap.get(PageConfigData.class);
     }
 
+    public LinkedList<String> getURLListAsString() {
+        LinkedList<String> result = new LinkedList<>();
+        for (PageConfigData page : getPageList()) {
+            String pageUrlHandle = page.getPageUrl();
+            result.add(pageUrlHandle);
+        }
+        return result;
+    }
+
     public LinkedList<URLHandle> getURLList() {
         LinkedList<URLHandle> result = new LinkedList<>();
         for (PageConfigData page : getPageList()) {

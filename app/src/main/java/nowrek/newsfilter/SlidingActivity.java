@@ -6,7 +6,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +21,7 @@ import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
 
 import nowrek.newsfilter.DataStructures.AppConfigData;
+import nowrek.newsfilter.DataStructures.Article;
 import nowrek.newsfilter.DataStructures.Page;
 import nowrek.newsfilter.DataStructures.ChangeConfig;
 import nowrek.newsfilter.UI.ScreenSlidePagerAdapter;
@@ -45,8 +45,8 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
         setContentView(R.layout.activity_screen_slide);
         fileCheck(CONFIG_FILE_NAME);
         setUpConfigData();
-        setUpThreadStructure();
         setUpPager();
+        setUpThreadStructure();
     }
 
     @Override
@@ -59,16 +59,8 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
 
     private void downloadPages() {
         pagerAdapter.clearPages();
+        pagerAdapter.setPages(appConfigData.getURLListAsString());
         threadPool.executePageDownloadTasks(appConfigData.getURLList());
-    }
-
-
-
-    public void displayArticles(LinkedList<Page> pages) {
-        for (Page page : pages) {
-            pagerAdapter.addPage(page.getPageOrigin().getUrl(), page.getContent());
-        }
-        pagerAdapter.notifyDataSetChanged();
     }
 
     private void setUpConfigData(){
@@ -81,10 +73,10 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
         uiHandler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message msg){
-                if(Page.class.isInstance(msg.obj)){
-                    Page page = (Page) msg.obj;
-                    pagerAdapter.addOrReplacePage(page.getPageOrigin().getUrl(), page.getContent());
-                    pagerAdapter.notifyDataSetChanged();
+                super.handleMessage(msg);
+                if(Article.class.isInstance(msg.obj)){
+                    Article article = (Article) msg.obj;
+                    pagerAdapter.addArticle(article.getArticleOrigin().getUrl(), article.getContent());
                 }
             }
         };

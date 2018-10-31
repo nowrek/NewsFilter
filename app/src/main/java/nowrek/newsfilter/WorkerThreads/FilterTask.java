@@ -6,27 +6,28 @@ import android.util.Log;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 
+import nowrek.newsfilter.DataStructures.Article;
 import nowrek.newsfilter.DataStructures.Page;
 import nowrek.newsfilter.SlidingActivity;
 
 class FilterTask implements Runnable {
-    private final Page _page;
+    private final Article _article;
     private final Handler _uiHandler;
 
-    FilterTask(Page page, Handler uiHandler) {
-        _page = page;
+    FilterTask(Article article, Handler uiHandler) {
+        _article = article;
         _uiHandler = uiHandler;
     }
 
     @Override
     public void run() {
-        Log.v("FilterTask", "RUNNING FILTER TASK FOR: "+_page.getPageOrigin().getUrl());
+        Log.v("FilterTask", "RUNNING FILTER TASK FOR: "+_article.getArticleOrigin().getUrl());
         try {
-            if (_page.getPageOrigin().getFilterSet().filterArticle(_page)) {
-                _uiHandler.dispatchMessage(_uiHandler.obtainMessage(1, _page));
+            if (_article.getArticleOrigin().getFilterSet().filterArticle(_article)) {
+                _uiHandler.dispatchMessage(_uiHandler.obtainMessage(1, _article));
             }
         } catch (Exception ex) {
-            //TODO Exception handling
+            Log.e("FilterTask", "EXCEPTION FOR: "+_article.getArticleOrigin().getUrl(), ex);
         }
     }
 }
