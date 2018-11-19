@@ -12,7 +12,7 @@ public class URLHandle {
 
     public FilterSet getFilterSet() {
         // TODO returning functioning filter set for this URL
-        return null;
+        return new FilterSet();
     }
 
     public String getUrl() {

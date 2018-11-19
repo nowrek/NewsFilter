@@ -1,9 +1,11 @@
 package nowrek.newsfilter;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,21 +18,24 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.concurrent.BlockingQueue;
 
 import nowrek.newsfilter.DataStructures.AppConfigData;
-import nowrek.newsfilter.DataStructures.Page;
+import nowrek.newsfilter.DataStructures.Article;
 import nowrek.newsfilter.DataStructures.ChangeConfig;
-import nowrek.newsfilter.DataStructures.PageConfigData;
-import nowrek.newsfilter.DataStructures.URLHandle;
 import nowrek.newsfilter.UI.ScreenSlidePagerAdapter;
 import nowrek.newsfilter.Utils.ConfigChangeListener;
-import nowrek.newsfilter.WorkerThreads.PageDownloadTask;
+import nowrek.newsfilter.WorkerThreads.NFThreadFactory;
+import nowrek.newsfilter.WorkerThreads.NFWorkQueue;
 
 public class SlidingActivity extends AppCompatActivity implements ConfigChangeListener {
     private ViewPager viewPager;
     private ScreenSlidePagerAdapter pagerAdapter;
     private AppConfigData appConfigData;
     private static final String CONFIG_FILE_NAME = "appConfig.json";
+    private BlockingQueue<Runnable> workQueue;
+    private NFThreadFactory threadPool;
+    private Handler uiHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,59 +43,53 @@ public class SlidingActivity extends AppCompatActivity implements ConfigChangeLi
 
         setContentView(R.layout.activity_screen_slide);
         fileCheck(CONFIG_FILE_NAME);
-        getConfiguration();
-        appConfigData.registerChangeListener(this);
+        setUpConfigData();
+        setUpPager();
+        setUpThreadStructure();
+    }
 
+    @Override
+    public void onConfigChange(Collection<ChangeConfig> changeList) {
+        saveJSONFile(CONFIG_FILE_NAME);
+        setUpConfigData();
+        downloadPages();
+
+    }
+
+    private void downloadPages() {
+        pagerAdapter.setPages(appConfigData.getURLListAsString());
+        threadPool.executePageDownloadTasks(appConfigData.getURLList());
+    }
+
+    private void setUpConfigData(){
+        if(appConfigData != null) appConfigData.unregisterChangeListener(this);
+        appConfigData = new AppConfigData(getJSONFile(CONFIG_FILE_NAME));
+        appConfigData.registerChangeListener(this);
+    }
+
+    private void setUpThreadStructure(){
+        uiHandler = new Handler(Looper.getMainLooper()){
+            @Override
+            public void handleMessage(Message msg){
+                super.handleMessage(msg);
+                if(Article.class.isInstance(msg.obj)){
+                    pagerAdapter.addArticle((Article) msg.obj);
+                    pagerAdapter.notifyDataSetChanged();
+                }
+            }
+        };
+        workQueue = new NFWorkQueue();
+        threadPool = new NFThreadFactory(uiHandler, workQueue,3);
+    }
+
+    private void setUpPager(){
         // Instantiate a ViewPager and a PagerAdapter.
         viewPager = findViewById(R.id.pager);
         pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
     }
 
-    @Override
-    public void onConfigChange(Collection<ChangeConfig> changeList) {
-        saveJSONFile(CONFIG_FILE_NAME);
-        getConfiguration();
-        downloadPages();
-
-    }
-
-    private void downloadPages() {
-        pagerAdapter.clearPages();
-
-        LinkedList<URLHandle> urlHandles = new LinkedList<>();
-
-        for (PageConfigData page : appConfigData.getPageList()) {
-            URLHandle pageUrlHandle = new URLHandle(page.getPageUrl());
-            urlHandles.add(pageUrlHandle);
-        }
-
-        try {
-            Log.v("CONCURRENT", "RUNNING NEW PAGE DOWNLOAD TASK!");
-            PageDownloadTask pageDownloadTask = new PageDownloadTask(this);
-            pageDownloadTask.execute(urlHandles);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-    }
-
-
-
-    public void displayArticles(LinkedList<Page> pages) {
-
-        for (Page page : pages) {
-
-            pagerAdapter.addPage(page.getPageOrigin().getUrl(), page.getContent());
-        }
-
-        if (this.pagerAdapter != null)
-            this.pagerAdapter.notifyDataSetChanged();
-    }
-
     public AppConfigData getConfiguration() {
-        if (appConfigData == null) {
-            appConfigData = new AppConfigData(getJSONFile(CONFIG_FILE_NAME));
-        }
         return appConfigData;
     }
 

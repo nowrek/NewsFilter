@@ -1,10 +1,11 @@
 package nowrek.newsfilter.Utils;
 
-import nowrek.newsfilter.DataStructures.Page;
+import nowrek.newsfilter.DataStructures.Article;
 
 public class FilterSet {
-    public boolean filterArticle(Page inPage) {
+
+    public boolean filterArticle(Article inArticle) {
         //TODO Actual filtering
-        return (inPage != null);
+        return (inArticle != null);
     }
 }

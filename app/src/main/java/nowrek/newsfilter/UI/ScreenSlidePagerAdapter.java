@@ -10,11 +10,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nowrek.newsfilter.DataStructures.Article;
+
 public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 
     private List<Fragment> pageFragments = new ArrayList<>();
     private Map<String, Integer> fragmentPositionTagMap = new HashMap<>();
-    private Map<Integer, Integer> fragmentPositionTextViewIdMap = new HashMap<>();
 
     public ScreenSlidePagerAdapter(FragmentManager fm) {
         super(fm);
@@ -31,18 +32,27 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         return pageFragments.size();
     }
 
-    public void addPage(String fragmentTag, String pageText) {
+    private void addPage(String fragmentTag) {
         int generatedId = View.generateViewId();
-        BasicFragment fragment = BasicFragment.newInstance(fragmentTag, pageText, generatedId);
+        BasicFragment fragment = BasicFragment.newInstance(fragmentTag, generatedId, new ArrayList<Article>());
         pageFragments.add(fragment);
         fragmentPositionTagMap.put(fragmentTag, pageFragments.indexOf(fragment));
-        fragmentPositionTextViewIdMap.put(pageFragments.indexOf(fragment), generatedId);
     }
 
-    public void clearPages() {
-        for (int i = 1; i < pageFragments.size(); ++i)
-            pageFragments.remove(i);
+    public void addArticle(Article article){
+        if(fragmentPositionTagMap.containsKey(article.getArticleOrigin().getUrl())) {
+            Integer position = fragmentPositionTagMap.get(article.getArticleOrigin().getUrl());
+            BasicFragment frag = (BasicFragment)pageFragments.get(position);
+            frag.addArticle(article);
+        }
+    }
 
-        fragmentPositionTagMap.clear();
+    public void setPages(List<String> tagList){
+        for(String tag : tagList){
+            if(!fragmentPositionTagMap.keySet().contains(tag)) {
+                addPage(tag);
+            }
+        }
+        notifyDataSetChanged();
     }
 }
